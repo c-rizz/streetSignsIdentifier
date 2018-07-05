@@ -10,9 +10,10 @@ class StreetSignsIdentifier
 {
 private:
   int verbosity = 0;
-  unsigned long preprocessForRedDurationMicro = 0;
 private:
-  void preprocessForRedSigns(cv::Mat& img);
+  cv::Mat findReds(const cv::Mat& img);
+  cv::Mat findRedsV1(const cv::Mat& img);
+  cv::Mat findRedsV2(const cv::Mat& img);
 
   void getEdges(const cv::Mat& inputImg, cv::Mat& edgeImg);
 
