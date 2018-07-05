@@ -50,10 +50,12 @@ std::vector<StreetSign> StreetSignsIdentifier::identify(cv::Mat img)
   displayImage(imgGray,"grayscale",1000);
 
   Mat edgeImg;
-  getEdges(imgP_gray, edgeImg);
+  getEdges(imgP, edgeImg);
   displayImage(edgeImg,"edges with preproc",1000);
   getEdges(imgGray, edgeImg);
   displayImage(edgeImg,"edges with grayscale",1000);
+  edgeImg = edgeImg.mul(reds);
+  displayImage(edgeImg,"masked edges",1000);
 
 
   std::vector<Vec3f> circles;
