@@ -12,11 +12,11 @@ using namespace cv;
 
 int main(int argc, char** argv)
 {
-  if(argc<2)
+  if(argc<3)
   {
     cout<<"Invalid parameters."<<endl;
     cout<<"correct usage is:"<<endl;
-    cout<<argv[0]<<" <inputImage> [options]"<<endl;
+    cout<<argv[0]<<" <inputImage> <warningClassifier> [options]"<<endl;
     return -1;
   }
 
@@ -29,6 +29,7 @@ int main(int argc, char** argv)
       verbosity=std::max(StreetSignsIdentifier::VERBOSITY_SHOW_IMAGES,verbosity);
   }
   string path = argv[1];
+  string warningClassifierPath = argv[2];
 
   cv::Mat image = cv::imread(path);
 	if(! image.data )
@@ -39,9 +40,16 @@ int main(int argc, char** argv)
 
   displayImage(image,"image",1000,1000*image.rows/image.cols);
 
-  StreetSignsIdentifier ssi;
+  StreetSignsIdentifier ssi(warningClassifierPath,"","");
   ssi.setVerbosity(verbosity);
 
-  ssi.identify(image);
+  std::vector<StreetSign> streetSigns = ssi.identify(image);
+
+  for(StreetSign s : streetSigns)
+  {
+    s.drawOnImage(image);
+  }
+
+  displayImage(image,"image",1000,1000*image.rows/image.cols);
 
 }

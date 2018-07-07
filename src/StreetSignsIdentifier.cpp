@@ -1,5 +1,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
+#include <exception>
 
 #include "StreetSignsIdentifier.hpp"
 #include "utils.hpp"
@@ -16,9 +17,10 @@ const int StreetSignsIdentifier::VERBOSITY_SHOW_IMAGES=2;
 /**
  * Initializes the StreetSignsIdentifier
  */
-StreetSignsIdentifier::StreetSignsIdentifier()
+StreetSignsIdentifier::StreetSignsIdentifier(std::string warningSignsClassifierPath,std::string speedLimitSignsClassifierPath,std::string noParkingSignsClassifierPath)
 {
-  //nothing to do by now
+	if(warningSignsClassifierPath=="" || !warningSignsClassifier.load(warningSignsClassifierPath))
+		THROW_NICE(invalid_argument,"couldn't load warning signs classifier at \""+warningSignsClassifierPath+"\"");
 }
 
 /**
@@ -65,13 +67,15 @@ std::vector<StreetSign> StreetSignsIdentifier::identify(cv::Mat img)
   drawCirclesOnImg(circles, imgCirc, 15);
   displayImage(imgCirc,"circles with preproc",1000);
 
+/*
   circles.clear();
   img.copyTo(imgCirc);
   getCircles(imgGray, circles);
   drawCirclesOnImg(circles, imgCirc, 15);
-  displayImage(imgCirc,"circles with gray",1000);
+  displayImage(imgCirc,"circles with gray",1000);*/
 
   vector<StreetSign> ret;
+	detectAllSigns(img, ret);
   return ret;
 }
 
@@ -335,7 +339,7 @@ void StreetSignsIdentifier::drawCirclesOnImg(std::vector<cv::Vec3f>& circles, cv
 	}
 	else if(circlesImage.channels()!=3)
 	{
-		throw std::invalid_argument("unsupported image (has "+std::to_string(circlesImage.channels())+" channels)");
+		THROW_NICE(invalid_argument,"unsupported image (has "+std::to_string(circlesImage.channels())+" channels)");
 	}
 
 	for(unsigned int i=0;i<min((unsigned int)circlesToDrawNum,(unsigned int)circles.size());i++)
@@ -346,4 +350,51 @@ void StreetSignsIdentifier::drawCirclesOnImg(std::vector<cv::Vec3f>& circles, cv
 		//cout<<"circles["<<i<<"] = "<<circles.at(i)<<endl;
 		circle(circlesImage, cv::Point2f(x,y), r, Scalar(0,255,0), 3, 8, 0 );
 	}
+}
+
+
+/**
+ * Detects objects in the provided image using a cacade classifier
+ * @param inputImage the image to serch into
+ * @param classifier the classifier to use
+ * @param detections here are returned the detected objects locations
+ */
+void StreetSignsIdentifier::detectWithCascade(cv::Mat& inputImage, cv::CascadeClassifier& classifier, std::vector<Rect>& detections)
+{
+	Mat convertedImage;
+	if(inputImage.type()==CV_8UC3)
+		cvtColor(inputImage, convertedImage, COLOR_BGR2GRAY);
+	else if(inputImage.type()==CV_8U)
+		convertedImage = inputImage;
+	else
+		THROW_NICE(invalid_argument,"provided image has unsupported format, only CV_8U and CV_8UC3 are supported");
+
+	float minSize = inputImage.cols/30;
+	float maxSize = inputImage.cols/2;
+  classifier.detectMultiScale( convertedImage, detections,1.1,3,0,Size2f(minSize,minSize),Size2f(maxSize,maxSize));
+}
+
+void StreetSignsIdentifier::detectWarningSigns(cv::Mat& inputImage, std::vector<StreetSign_Warning>& detectedSigns)
+{
+	vector<Rect> detections;
+	detectWithCascade(inputImage,warningSignsClassifier, detections);
+
+	//build the descritpions
+	for(Rect r : detections)
+		detectedSigns.push_back(StreetSign_Warning(Point2f(r.x+r.width/2,r.y+r.height/2),r.size()));
+}
+
+void StreetSignsIdentifier::detectAllSigns(cv::Mat& inputImage, std::vector<StreetSign>& detectedSigns)
+{
+	vector<StreetSign_Warning> warnings;
+	detectWarningSigns(inputImage, warnings);
+	for(StreetSign_Warning sw : warnings)
+		detectedSigns.push_back(sw);
+	//detectedSigns.insert(detectedSigns.end(), warnings.begin(), warnings.end());
+/*	vector<StreetSign_Warning> speeds;
+	detectSpeedLimitSigns(inputImage, speeds);
+	detectedSigns.insert(detectedSigns.end(), speeds.begin(), speeds.end());
+	vector<StreetSign_Warning> noParks;
+	detectNoParkingSigns(inputImage, noParks);
+	detectedSigns.insert(detectedSigns.end(), noParks.begin(), noParks.end());*/
 }

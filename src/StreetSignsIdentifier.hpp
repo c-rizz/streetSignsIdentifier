@@ -5,12 +5,19 @@
 #include <chrono>
 #include <opencv2/core/core.hpp>
 #include "StreetSign.hpp"
+#include <opencv2/objdetect.hpp>
+#include "StreetSign_Warning.hpp"
+#include "StreetSign_Speed.hpp"
+#include "StreetSign_NoParking.hpp"
 
 class StreetSignsIdentifier
 {
 private:
   int verbosity = 0;
-private:
+  cv::CascadeClassifier warningSignsClassifier;
+  cv::CascadeClassifier speedLimitSignsClassifier;
+  cv::CascadeClassifier noParkingSignsClassifier;
+
   cv::Mat findReds(const cv::Mat& img);
   cv::Mat findRedsV1(const cv::Mat& img);
   cv::Mat findRedsV2(const cv::Mat& img);
@@ -20,8 +27,14 @@ private:
   void getCircles(const cv::Mat& inputImg, std::vector<cv::Vec3f>& circles);
 
   void drawCirclesOnImg(std::vector<cv::Vec3f>& circles, cv::Mat& circlesImage, int circlesToDrawNum);
+
+  void detectWithCascade(cv::Mat& inputImage, cv::CascadeClassifier& classifier, std::vector<cv::Rect>& detections);
+
+  void detectWarningSigns(cv::Mat& inputImage, std::vector<StreetSign_Warning>& detectedSigns);
+
+  void detectAllSigns(cv::Mat& inputImage, std::vector<StreetSign>& detectedSigns);
 public:
-  StreetSignsIdentifier();
+  StreetSignsIdentifier(std::string warningSignsClassifierPath,std::string speedLimitSignsClassifierPath,std::string noParkingSignsClassifierPath);
 
   static const int VERBOSITY_NORMAL;
   static const int VERBOSITY_TEXT_ONLY;

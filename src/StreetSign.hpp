@@ -26,12 +26,13 @@ private:
    */
   const SignType type;
 protected:
-  StreetSign(cv::Point2f& centerPosition, cv::Size2f& boundingBoxSize, SignType type);
+  StreetSign(const cv::Point2f& centerPosition, const cv::Size2f& boundingBoxSize, SignType type);
 
 public:
   cv::Point2f getCenterPosition();
   cv::Size2f getBoundingBoxSize();
   SignType getType();
+  virtual void drawOnImage(cv::Mat& inputOutputImage);
 };
 
 #endif

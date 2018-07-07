@@ -1,4 +1,5 @@
 #include "StreetSign.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
 
 /**
  * Constructs the StreetSign
@@ -6,7 +7,7 @@
  * @param height         The max vertical pixel size of the sign
  * @param type           the type of sign, see StreetSign::SignType
  */
-StreetSign::StreetSign(cv::Point2f& centerPosition, cv::Size2f& boundingBoxSize, SignType type) :
+StreetSign::StreetSign(const cv::Point2f& centerPosition, const cv::Size2f& boundingBoxSize, SignType type) :
   centerPosition(centerPosition),
   boundingBoxSize(boundingBoxSize),
   type(type)
@@ -38,4 +39,16 @@ cv::Size2f StreetSign::getBoundingBoxSize()
 StreetSign::SignType StreetSign::getType()
 {
   return type;
+}
+
+/**
+ * Draws a bounding symbol around the sign
+ * @param inputOutputImage image to draw upon
+ */
+void StreetSign::drawOnImage(cv::Mat& inputOutputImage)
+{
+  rectangle(inputOutputImage,
+      cv::Point2f(centerPosition.x-boundingBoxSize.width/2,centerPosition.y-boundingBoxSize.height/2),
+      cv::Point2f(centerPosition.x+boundingBoxSize.width/2,centerPosition.y+boundingBoxSize.height/2),
+      cv::Scalar(0,0,255), inputOutputImage.rows/200+1);
 }
