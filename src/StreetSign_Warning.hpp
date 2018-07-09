@@ -8,6 +8,7 @@ class StreetSign_Warning : public StreetSign
 {
 public:
   StreetSign_Warning(const cv::Point2f& centerPosition, const cv::Size2f& boundingBoxSize);
+  virtual void drawOnImage(cv::Mat& inputOutputImage) override;
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <opencv2/core/core.hpp>
+#include <memory>
 #include "StreetSign.hpp"
 #include <opencv2/objdetect.hpp>
 #include "StreetSign_Warning.hpp"
@@ -31,17 +32,24 @@ private:
   void detectWithCascade(cv::Mat& inputImage, cv::CascadeClassifier& classifier, std::vector<cv::Rect>& detections);
 
   void detectWarningSigns(cv::Mat& inputImage, std::vector<StreetSign_Warning>& detectedSigns);
+  void detectSpeedLimitSigns(cv::Mat& inputImage, std::vector<StreetSign_Speed>& detectedSigns);
+  void detectNoParkingSigns(cv::Mat& inputImage, std::vector<StreetSign_NoParking>& detectedSigns);
 
-  void detectAllSigns(cv::Mat& inputImage, std::vector<StreetSign>& detectedSigns);
+  void detectAllSigns(cv::Mat& inputImage, std::vector<std::shared_ptr<StreetSign>>& detectedSigns);
+
+  void filterDetectionsByBinaryMask(std::vector<std::shared_ptr<StreetSign>>& detectedSigns, cv::Mat& binaryMask);
+  void filterSignsContainedInBiggerOnes(std::vector<std::shared_ptr<StreetSign>>& detectedSigns);
+
 public:
   StreetSignsIdentifier(std::string warningSignsClassifierPath,std::string speedLimitSignsClassifierPath,std::string noParkingSignsClassifierPath);
 
   static const int VERBOSITY_NORMAL;
   static const int VERBOSITY_TEXT_ONLY;
   static const int VERBOSITY_SHOW_IMAGES;
+  static const int VERBOSITY_SHOW_MORE_IMAGES;
   void setVerbosity(int status);
 
-  std::vector<StreetSign> identify(cv::Mat img);
+  std::vector<std::shared_ptr<StreetSign>> identify(cv::Mat img);
 };
 
 #endif

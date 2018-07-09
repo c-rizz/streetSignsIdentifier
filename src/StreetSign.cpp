@@ -1,5 +1,9 @@
 #include "StreetSign.hpp"
 #include <opencv2/imgproc/imgproc.hpp>
+#include <iostream>
+
+using namespace std;
+using namespace cv;
 
 /**
  * Constructs the StreetSign
@@ -51,4 +55,17 @@ void StreetSign::drawOnImage(cv::Mat& inputOutputImage)
       cv::Point2f(centerPosition.x-boundingBoxSize.width/2,centerPosition.y-boundingBoxSize.height/2),
       cv::Point2f(centerPosition.x+boundingBoxSize.width/2,centerPosition.y+boundingBoxSize.height/2),
       cv::Scalar(0,0,255), inputOutputImage.rows/200+1);
+}
+
+
+/**
+ * Returns the traffic sign bounding box
+ * @return the bounding box
+ */
+Rect StreetSign::getBoundingBox()
+{
+  return Rect((int)(centerPosition.x-boundingBoxSize.width/2),
+              (int)(centerPosition.y-boundingBoxSize.height/2),
+              (int)(boundingBoxSize.width),
+              (int)(boundingBoxSize.height));
 }

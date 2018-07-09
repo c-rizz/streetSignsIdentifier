@@ -10,5 +10,7 @@ add_executable(${PROJECT_NAME}
   src/StreetSignsIdentifier.cpp
   src/StreetSign.cpp
   src/StreetSign_Warning.cpp
+  src/StreetSign_NoParking.cpp
+  src/StreetSign_Speed.cpp
   src/utils.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
