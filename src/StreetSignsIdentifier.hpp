@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <opencv2/core/core.hpp>
+#include <opencv2/ml/ml.hpp>
 #include <memory>
 #include "StreetSign.hpp"
 #include <opencv2/objdetect.hpp>
@@ -16,8 +17,9 @@ class StreetSignsIdentifier
 private:
   int verbosity = 0;
   cv::CascadeClassifier warningSignsClassifier;
-  cv::CascadeClassifier speedLimitSignsClassifier;
-  cv::CascadeClassifier noParkingSignsClassifier;
+  cv::CascadeClassifier roundSignsClassifier;
+  cv::Ptr<cv::ml::KNearest> digitsKnnPtr;
+
 
   cv::Mat findReds(const cv::Mat& img);
   cv::Mat findRedsV1(const cv::Mat& img);
@@ -26,22 +28,25 @@ private:
   void getEdges(const cv::Mat& inputImg, cv::Mat& edgeImg);
 
   void getCircles(const cv::Mat& inputImg, std::vector<cv::Vec3f>& circles);
+  void getLines(const cv::Mat& inputEdgeImg, std::vector<cv::Vec2f>& lines);
 
   void drawCirclesOnImg(std::vector<cv::Vec3f>& circles, cv::Mat& circlesImage, int circlesToDrawNum);
+  void drawLinesOnImg(std::vector<cv::Vec2f>& lines, cv::Mat& linesImage, int linesToDrawNum);
 
   void detectWithCascade(cv::Mat& inputImage, cv::CascadeClassifier& classifier, std::vector<cv::Rect>& detections);
 
   void detectWarningSigns(cv::Mat& inputImage, std::vector<StreetSign_Warning>& detectedSigns);
-  void detectSpeedLimitSigns(cv::Mat& inputImage, std::vector<StreetSign_Speed>& detectedSigns);
-  void detectNoParkingSigns(cv::Mat& inputImage, std::vector<StreetSign_NoParking>& detectedSigns);
+  void detectRoundRedSigns(cv::Mat& inputImage, std::vector<StreetSign>& detectedSigns);
+  void classifyRoundRedSign(cv::Mat& inputImage, std::shared_ptr<StreetSign>& detectedSign);
+  int searchSpeedLimit(const cv::Mat& inputImage);
 
-  void detectAllSigns(cv::Mat& inputImage, std::vector<std::shared_ptr<StreetSign>>& detectedSigns);
 
   void filterDetectionsByBinaryMask(std::vector<std::shared_ptr<StreetSign>>& detectedSigns, cv::Mat& binaryMask);
   void filterSignsContainedInBiggerOnes(std::vector<std::shared_ptr<StreetSign>>& detectedSigns);
+  void buildKnn();
 
 public:
-  StreetSignsIdentifier(std::string warningSignsClassifierPath,std::string speedLimitSignsClassifierPath,std::string noParkingSignsClassifierPath);
+  StreetSignsIdentifier(std::string warningSignsClassifierPath,std::string speedLimitSignsClassifierPath,std::string roundSignsClassifierPath);
 
   static const int VERBOSITY_NORMAL;
   static const int VERBOSITY_TEXT_ONLY;

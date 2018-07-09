@@ -54,7 +54,7 @@ void StreetSign::drawOnImage(cv::Mat& inputOutputImage)
   rectangle(inputOutputImage,
       cv::Point2f(centerPosition.x-boundingBoxSize.width/2,centerPosition.y-boundingBoxSize.height/2),
       cv::Point2f(centerPosition.x+boundingBoxSize.width/2,centerPosition.y+boundingBoxSize.height/2),
-      cv::Scalar(0,0,255), inputOutputImage.rows/200+1);
+      cv::Scalar(128,128,128), inputOutputImage.rows/400+1);
 }
 
 

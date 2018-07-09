@@ -16,7 +16,7 @@ int main(int argc, char** argv)
   {
     cout<<"Invalid parameters."<<endl;
     cout<<"correct usage is:"<<endl;
-    cout<<argv[0]<<" <inputImage> <warningClassifier> <noParkingClassifier> [options]"<<endl;
+    cout<<argv[0]<<" <inputImage> <warningClassifier> <roundSignsClassifier> [options]"<<endl;
     return -1;
   }
 
@@ -51,6 +51,19 @@ int main(int argc, char** argv)
   for(shared_ptr<StreetSign> s : streetSigns)
   {
     s->drawOnImage(image);
+    if(s->getType()==StreetSign::SignType::WARNING)
+    {
+      cout<<"Detected a warning sign"<<endl;
+    }
+    else if(s->getType()==StreetSign::SignType::NO_PARKING)
+    {
+      cout<<"Detected a no parking sign"<<endl;
+    }
+    else if(s->getType()==StreetSign::SignType::SPEED)
+    {
+      std::shared_ptr<StreetSign_Speed> sssp = std::dynamic_pointer_cast<StreetSign_Speed> (s);
+      cout<<"Detected a speed limit sign, limit at "<<sssp->getLimit()<<endl;
+    }
   }
 
   displayImage(image,"image",1000,1000*image.rows/image.cols);
