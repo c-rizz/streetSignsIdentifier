@@ -54,7 +54,7 @@ public:
   static const int VERBOSITY_SHOW_MORE_IMAGES;
   void setVerbosity(int status);
 
-  std::vector<std::shared_ptr<StreetSign>> identify(cv::Mat img);
+  std::vector<std::shared_ptr<StreetSign>> identify(cv::Mat& img);
 };
 
 #endif

@@ -36,7 +36,7 @@ StreetSignsIdentifier::StreetSignsIdentifier(std::string warningSignsClassifierP
  * @param  img the image to be analyzed
  * @return     a vector containing all the identified signs
  */
-vector<shared_ptr<StreetSign>> StreetSignsIdentifier::identify(cv::Mat img)
+vector<shared_ptr<StreetSign>> StreetSignsIdentifier::identify(cv::Mat& img)
 {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	Mat imgWb;
