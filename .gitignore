@@ -5,3 +5,7 @@ cmake_install.cmake
 Makefile
 streetSigns
 .~lock*
+report/report.aux
+report/report.log
+report/report.synctex.gz
+report/report.tex.backup
