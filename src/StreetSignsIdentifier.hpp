@@ -12,6 +12,9 @@
 #include "StreetSign_Speed.hpp"
 #include "StreetSign_NoParking.hpp"
 
+/**
+ * This class provides objects capable of identifing traffic signs in images
+ */
 class StreetSignsIdentifier
 {
 private:

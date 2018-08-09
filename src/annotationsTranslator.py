@@ -1,8 +1,11 @@
  #!/usr/bin/env python3
 
+#This is a script to build opencv_traincascade annotations from the BelgiumTS and German traffic sign datasets
 
 # IMPORTANT:
 # This source contains non-ascii characters, so use python 3 (or just run this as a script as there's the shebang)
+
+
 
 
 import sys

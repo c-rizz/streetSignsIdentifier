@@ -3,6 +3,10 @@
 
 #include <opencv2/core/core.hpp>
 
+/**
+ * The objects of this class describe traffic signs in images, indicating their position,
+ * size, and if possible, their type.
+ */
 class StreetSign
 {
 public:
